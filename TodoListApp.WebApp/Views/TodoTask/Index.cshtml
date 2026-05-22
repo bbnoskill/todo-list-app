@@ -1,0 +1,49 @@
+﻿@model IEnumerable<TodoListApp.WebApp.Models.TodoTask>
+@{
+    ViewData["Title"] = "Tasks for " + ViewBag.TodoListTitle;
+}
+
+<h1>Tasks for: @ViewBag.TodoListTitle</h1>
+
+<p>
+    <a asp-action="Create" asp-route-listId="@ViewBag.TodoListId" class="btn btn-primary">Create New Task</a>
+    <a asp-controller="TodoList" asp-action="Index" class="btn btn-secondary">Back to Lists</a>
+</p>
+<table class="table table-striped align-middle">
+    <thead>
+    <tr>
+        <th>Status</th>
+        <th>Title</th>
+        <th>Due Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <!-- Умова US10: Якщо задача не виконана і термін вийшов, підсвітити червоним -->
+        var isOverdue = !item.IsCompleted && item.DueDate < DateTime.Now;
+        var rowClass = isOverdue ? "table-danger fw-bold" : "";
+        var textClass = isOverdue ? "text-danger" : "";
+
+        <tr class="@rowClass">
+            <td>
+                @if (item.IsCompleted) {
+                    <span class="badge bg-success">Completed</span>
+                } else {
+                    <span class="badge bg-secondary">Active</span>
+                    @if(isOverdue) {
+                        <span class="badge bg-danger ms-1">OVERDUE</span>
+                    }
+                }
+            </td>
+            <td class="@textClass">@item.Title</td>
+            <td class="@textClass">@item.DueDate.ToString("g")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

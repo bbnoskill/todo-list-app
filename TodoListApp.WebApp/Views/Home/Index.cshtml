@@ -1,0 +1,196 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <div class="hero-section text-center py-5">
+        <h1 class="display-4" style="border: none; display: block;">Welcome back, @User.Identity.Name!</h1>
+        <p class="lead text-muted mt-2">Here's your productivity dashboard. Stay organized and on track.</p>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">📋</span>
+                    </div>
+                    <h5 class="card-title">My To-Do Lists</h5>
+                    <div class="text-start mt-3 mb-3">
+                        @if (ViewBag.TopLists != null && ((IEnumerable<TodoListApp.WebApp.Models.TodoList>)ViewBag.TopLists).Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var list in (IEnumerable<TodoListApp.WebApp.Models.TodoList>)ViewBag.TopLists)
+                                {
+                                    <a asp-controller="TodoTask" asp-action="Index" asp-route-listId="@list.Id" class="list-group-item list-group-item-action border rounded mb-2 shadow-sm d-flex align-items-center text-decoration-none">
+                                        <span class="me-2 text-primary">📝</span>
+                                        <span class="text-truncate fw-medium text-dark" title="@list.Title">@list.Title</span>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center small mb-0">No lists found. Create one!</p>
+                        }
+                    </div>
+                    <a asp-controller="TodoList" asp-action="Index" class="btn btn-primary mt-auto">Open Lists</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">✅</span>
+                    </div>
+                    <h5 class="card-title">Assigned Tasks</h5>
+                    <div class="text-start mt-3 mb-3">
+                        @if (ViewBag.TopTasks != null && ((IEnumerable<TodoListApp.WebApp.Models.TodoTask>)ViewBag.TopTasks).Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var task in (IEnumerable<TodoListApp.WebApp.Models.TodoTask>)ViewBag.TopTasks)
+                                {
+                                    var isOverdue = task.DueDate < DateTime.Now && !task.IsCompleted;
+                                    var timeClass = isOverdue ? "text-danger fw-bold" : "text-muted";
+                                    <a asp-controller="TodoTask" asp-action="Details" asp-route-id="@task.Id" class="list-group-item list-group-item-action border rounded mb-2 shadow-sm d-flex flex-column text-decoration-none">
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2">📌</span>
+                                            <span class="text-truncate fw-medium text-dark" title="@task.Title">@task.Title</span>
+                                        </div>
+                                        <small class="@timeClass ms-4 mt-1"><i class="bi bi-clock"></i> Due: @task.DueDate.ToString("g")</small>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center small mb-0">No pending tasks. You're all caught up!</p>
+                        }
+                    </div>
+                    <a asp-controller="AssignedTasks" asp-action="Index" class="btn btn-primary mt-auto">View Tasks</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">🔍</span>
+                    </div>
+                    <h5 class="card-title">Search Tasks</h5>
+                    <p class="text-muted">Quickly find any task by title, due date, or creation date. Never lose track of your work.</p>
+                    <a asp-controller="Search" asp-action="Index" class="btn btn-primary mt-2">Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2 mb-5">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">🏷️</span>
+                    </div>
+                    <h5 class="card-title">Tags</h5>
+                    <div class="mt-3 mb-3 text-start">
+                        @if (ViewBag.TopTags != null)
+                        {
+                            var topTags = ((IEnumerable<dynamic>)ViewBag.TopTags).ToList();
+                            if (topTags.Any())
+                            {
+                                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                    @foreach (var item in topTags)
+                                    {
+                                        <span class="badge bg-secondary p-2 d-flex align-items-center">
+                                            #@item.Tag.Name <span class="badge bg-light text-dark ms-2 rounded-pill">@item.Count tasks</span>
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted text-center small mb-0">No tags used yet.</p>
+                            }
+                        }
+                    </div>
+                    <a asp-controller="Tags" asp-action="Index" class="btn btn-outline-primary mt-auto">Manage Tags</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center mb-3">💡 Quick Tips</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <span class="badge bg-primary me-2">Tip</span>
+                            Use <strong>tags</strong> to categorize tasks across different lists.
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-success me-2">Tip</span>
+                            Set <strong>due dates</strong> to keep track of deadlines.
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-info me-2">Tip</span>
+                            Add <strong>comments</strong> to tasks for additional notes and context.
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-warning me-2">Tip</span>
+                            Use the <strong>search</strong> feature to quickly find tasks by title or date.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="hero-section text-center py-5">
+        <h1 class="display-4" style="border: none; display: block;">Welcome to TodoListApp</h1>
+        <p class="lead text-muted mt-3">Organize your tasks, manage your time, and stay productive.</p>
+        <div class="mt-4">
+            <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg me-2">Get Started</a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary btn-lg">Sign In</a>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">📋</span>
+                    </div>
+                    <h5 class="card-title">Create Lists</h5>
+                    <p class="text-muted">Organize your work into separate to-do lists. Keep your projects structured and manageable.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">✅</span>
+                    </div>
+                    <h5 class="card-title">Track Tasks</h5>
+                    <p class="text-muted">Add tasks with due dates, tags, and comments. Mark them complete as you make progress.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <span style="font-size: 2.5rem;">🔒</span>
+                    </div>
+                    <h5 class="card-title">Private & Secure</h5>
+                    <p class="text-muted">Your data is private. Each user sees only their own lists and tasks. Secured with JWT authentication.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

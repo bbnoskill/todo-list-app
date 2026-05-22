@@ -1,0 +1,18 @@
+@model TodoListApp.WebApp.Models.Comment
+@{ ViewData["Title"] = "Edit Comment"; }
+
+<h1>Edit Comment</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TodoTaskId" />
+
+    <div class="mb-3">
+        <label asp-for="Text" for="comment-text" class="form-label">Comment Text</label>
+        <textarea asp-for="Text" id="comment-text" class="form-control" rows="4" required></textarea>
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-controller="TodoTask" asp-action="Edit" asp-route-id="@Model.TodoTaskId" class="btn btn-secondary">Cancel</a>
+</form>

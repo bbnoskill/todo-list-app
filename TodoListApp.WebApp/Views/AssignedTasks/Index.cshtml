@@ -1,0 +1,90 @@
+@model IEnumerable<TodoListApp.WebApp.Models.TodoTask>
+@{
+    ViewData["Title"] = "Assigned Tasks";
+    bool? currentFilter = ViewBag.CurrentFilter as bool?;
+    string currentSort = ViewBag.CurrentSort as string ?? "duedate";
+}
+
+<h1>Assigned Tasks</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <strong>Filter by:</strong>
+        <fieldset class="d-inline border-0 p-0 m-0">
+            <legend class="visually-hidden">Filter by status</legend>
+            <div class="btn-group">
+                <a asp-action="Index" asp-route-isCompleted="" asp-route-sortBy="@currentSort"
+                   class="btn btn-sm @(currentFilter == null ? "btn-primary" : "btn-outline-primary")">All</a>
+                <a asp-action="Index" asp-route-isCompleted="false" asp-route-sortBy="@currentSort"
+                   class="btn btn-sm @(currentFilter == false ? "btn-primary" : "btn-outline-primary")">Active</a>
+                <a asp-action="Index" asp-route-isCompleted="true" asp-route-sortBy="@currentSort"
+                   class="btn btn-sm @(currentFilter == true ? "btn-primary" : "btn-outline-primary")">Completed</a>
+            </div>
+        </fieldset>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <strong>Sort by:</strong>
+        <fieldset class="d-inline border-0 p-0 m-0 text-md-end">
+            <legend class="visually-hidden">Sort by property</legend>
+            <div class="btn-group">
+                <a asp-action="Index" asp-route-isCompleted="@currentFilter" asp-route-sortBy="duedate"
+                   class="btn btn-sm @(currentSort.ToLower() == "duedate" ? "btn-secondary" : "btn-outline-secondary")">Due Date</a>
+                <a asp-action="Index" asp-route-isCompleted="@currentFilter" asp-route-sortBy="title"
+                   class="btn btn-sm @(currentSort.ToLower() == "title" ? "btn-secondary" : "btn-outline-secondary")">Title</a>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Title</th>
+            <th>Due Date</th>
+            <th>Change Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            var isOverdue = !item.IsCompleted && item.DueDate < DateTime.Now;
+            var rowClass = isOverdue ? "table-danger fw-bold" : "";
+            var textClass = isOverdue ? "text-danger" : "";
+
+            <tr class="@rowClass">
+                <td>
+                    @if (item.IsCompleted) {
+                        <span class="badge bg-success">Completed</span>
+                    } else {
+                        <span class="badge bg-secondary">Active</span>
+                        @if (isOverdue) {
+                            <span class="badge bg-danger ms-1">OVERDUE</span>
+                        }
+                    }
+                </td>
+                <td class="@textClass">@item.Title</td>
+                <td class="@textClass">@item.DueDate.ToString("g")</td>
+                <td>
+                    <form asp-action="ChangeStatus" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <!-- Передаємо поточні фільтри/сортування, щоб після кліку сторінка не скидалась -->
+                        <input type="hidden" name="currentFilter" value="@currentFilter" />
+                        <input type="hidden" name="currentSort" value="@currentSort" />
+
+                        @if (item.IsCompleted) {
+                            <input type="hidden" name="isCompleted" value="false" />
+                            <button type="submit" class="btn btn-sm btn-outline-warning">Re-open</button>
+                        } else {
+                            <input type="hidden" name="isCompleted" value="true" />
+                            <button type="submit" class="btn btn-sm btn-outline-success">Complete</button>
+                        }
+                    </form>
+                </td>
+                <td>
+                    <a asp-controller="TodoTask" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

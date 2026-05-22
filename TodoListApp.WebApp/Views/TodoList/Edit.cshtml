@@ -1,0 +1,33 @@
+@model TodoListApp.WebApp.Models.TodoListWebApiModel
+@{
+    ViewData["Title"] = "Edit To-Do List";
+}
+
+<h1>Edit To-Do List</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group mb-3">
+                <label asp-for="Title" for="todo-title" class="control-label">Title</label>
+                <input asp-for="Title" id="todo-title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" for="todo-description" class="control-label">Description</label>
+                <textarea asp-for="Description" id="todo-description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

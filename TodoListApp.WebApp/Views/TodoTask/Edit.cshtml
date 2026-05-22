@@ -1,0 +1,103 @@
+@model TodoListApp.WebApp.Models.TodoTaskWebApiModel
+@{
+    ViewData["Title"] = "Edit Task";
+}
+
+<h1>Edit Task</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TodoListId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" for="task-title" class="control-label">Title</label>
+                <input asp-for="Title" id="task-title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" for="task-description" class="control-label">Description</label>
+                <textarea asp-for="Description" id="task-description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="DueDate" for="task-duedate" class="control-label">Due Date</label>
+                <input asp-for="DueDate" id="task-duedate" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check mb-3">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsCompleted" /> @Html.DisplayNameFor(m => m.IsCompleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-listId="@Model.TodoListId" class="btn btn-secondary">Back to Tasks</a>
+            </div>
+        </form>
+        <hr />
+        <h4>Manage Tags</h4>
+        @if (ViewBag.Tags != null)
+        {
+            <ul class="list-group mb-3">
+                @foreach (var tag in (IEnumerable<TodoListApp.WebApp.Models.Tag>)ViewBag.Tags)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>#@tag.Name</span>
+                        <form asp-action="RemoveTag" method="post" class="m-0">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="tagId" value="@tag.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+
+        <form asp-action="AddTag" method="post" class="d-flex gx-2 align-items-center">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="text" name="tagName" class="form-control me-2" placeholder="New tag name (e.g. urgent)" required />
+            <button type="submit" class="btn btn-success">Add Tag</button>
+        </form>
+        <hr />
+        <h4>Manage Comments</h4>
+
+        <form asp-controller="Comments" asp-action="Add" method="post" class="mb-4">
+            <input type="hidden" name="taskId" value="@Model.Id" />
+            <div class="d-flex gx-2 align-items-center">
+                <textarea name="text" class="form-control me-2" rows="2" placeholder="Write a new comment..." required></textarea>
+                <button type="submit" class="btn btn-success">Add</button>
+            </div>
+        </form>
+
+        @if (ViewBag.Comments != null && ((IEnumerable<TodoListApp.WebApp.Models.Comment>)ViewBag.Comments).Any())
+        {
+            foreach (var comment in (IEnumerable<TodoListApp.WebApp.Models.Comment>)ViewBag.Comments)
+            {
+                <div class="card mb-2">
+                    <div class="card-body py-2 d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted d-block">@comment.CreatedDate.ToString("g")</small>
+                            <p class="card-text mb-1">@comment.Text</p>
+                        </div>
+                        <div class="d-flex flex-column gap-1">
+                            <a asp-controller="Comments" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-controller="Comments" asp-action="Delete" method="post" class="m-0">
+                                <input type="hidden" name="id" value="@comment.Id" />
+                                <input type="hidden" name="taskId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Del</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

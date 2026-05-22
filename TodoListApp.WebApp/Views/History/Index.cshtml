@@ -1,0 +1,35 @@
+@model IEnumerable<TodoListApp.WebApp.Models.TaskHistoryWebApiModel>
+@{
+    ViewData["Title"] = "Task History";
+}
+
+<h1>Task History</h1>
+<p class="text-muted">Last 10 completed and deleted tasks</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No history records yet.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th>Task Title</th>
+            <th>Action</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            var badgeClass = item.Action == "Completed" ? "bg-success" : "bg-danger";
+            <tr>
+                <td>@item.TaskTitle</td>
+                <td><span class="badge @badgeClass">@item.Action</span></td>
+                <td>@item.ActionDate.ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

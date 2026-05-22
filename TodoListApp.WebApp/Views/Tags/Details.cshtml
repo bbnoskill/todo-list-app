@@ -1,0 +1,30 @@
+﻿@model IEnumerable<TodoListApp.WebApp.Models.TodoTask>
+@{ ViewData["Title"] = "Tasks by Tag"; }
+
+<h1>Tasks for Tag #@ViewBag.TagId</h1>
+
+<table class="table table-striped mt-4">
+    <thead>
+    <tr>
+        <th>Status</th>
+        <th>Title</th>
+        <th>Due Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(item.IsCompleted ? "Completed" : "Active")</td>
+            <td>@item.Title</td>
+            <td>@item.DueDate.ToString("g")</td>
+            <td>
+                <a asp-controller="TodoTask" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Back to Tags</a>

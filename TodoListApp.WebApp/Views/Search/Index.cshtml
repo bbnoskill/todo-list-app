@@ -1,0 +1,85 @@
+﻿@model IEnumerable<TodoListApp.WebApp.Models.TodoTask>
+@{
+    ViewData["Title"] = "Search Tasks";
+}
+
+<h1>Search Tasks</h1>
+
+<div class="card mb-4">
+    <div class="card-body bg-light">
+        <form asp-action="Index" method="get" class="row gx-3 gy-2 align-items-center">
+            <div class="col-sm-3">
+                <label class="visually-hidden" for="searchBy">Search By</label>
+                <select name="searchBy" id="searchBy" class="form-select">
+                    <!-- За замовчуванням обираємо значення з ViewBag, якщо воно є -->
+                    <option value="title" selected="@(ViewBag.SearchBy == "title")">Title</option>
+                    <option value="duedate" selected="@(ViewBag.SearchBy == "duedate")">Due Date (YYYY-MM-DD)</option>
+                    <option value="createddate" selected="@(ViewBag.SearchBy == "createddate")">Creation Date (YYYY-MM-DD)</option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="visually-hidden" for="searchQuery">Search Query</label>
+                <input type="text" class="form-control" name="searchQuery" id="searchQuery" placeholder="Enter keywords or date..." value="@ViewBag.SearchQuery">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a asp-action="Index" class="btn btn-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.SearchQuery))
+{
+    <h4>Search Results for "@ViewBag.SearchQuery"</h4>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No tasks found matching your criteria.</div>
+    }
+    else
+    {
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th>Status</th>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>Created On</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model) {
+                <!-- US16: Highlight overdue tasks -->
+                var isOverdue = !item.IsCompleted && item.DueDate < DateTime.Now;
+                var rowClass = isOverdue ? "table-danger fw-bold" : "";
+                var textClass = isOverdue ? "text-danger" : "";
+
+                <tr class="@rowClass">
+                    <td>
+                        @if (item.IsCompleted) {
+                            <span class="badge bg-success">Completed</span>
+                        } else {
+                            <span class="badge bg-secondary">Active</span>
+                            @if (isOverdue) {
+                                <span class="badge bg-danger ms-1">OVERDUE</span>
+                            }
+                        }
+                    </td>
+                    <td class="@textClass">@item.Title</td>
+                    <td class="@textClass">@item.DueDate.ToString("g")</td>
+                    <td>@item.CreatedDate.ToString("g")</td>
+                    <td>
+                        <a asp-controller="TodoTask" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+else
+{
+    <p class="text-muted">Use the form above to search for tasks across all your lists.</p>
+}

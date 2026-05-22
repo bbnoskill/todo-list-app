@@ -1,0 +1,44 @@
+@model TodoListApp.WebApp.Models.TodoTaskWebApiModel
+@{
+    ViewData["Title"] = "Create Task";
+}
+
+<h1>Create Task</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TodoListId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" for="task-title" class="control-label">Title</label>
+                <input asp-for="Title" id="task-title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" for="task-description" class="control-label">Description</label>
+                <textarea asp-for="Description" id="task-description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="DueDate" for="task-duedate" class="control-label">Due Date</label>
+                <input asp-for="DueDate" id="task-duedate" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check mb-3">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsCompleted" /> @Html.DisplayNameFor(m => m.IsCompleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-listId="@Model.TodoListId" class="btn btn-secondary">Back to Tasks</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

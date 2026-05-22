@@ -1,0 +1,58 @@
+﻿@model TodoListApp.WebApp.Models.TodoTask
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<h1>Task Details</h1>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@(string.IsNullOrEmpty(Model.Description) ? "No description" : Model.Description)</dd>
+
+        <dt class="col-sm-2">Due Date</dt>
+        <dd class="col-sm-10">@Model.DueDate.ToString("g")</dd>
+
+        <dt class="col-sm-2">Status</dt>
+        <dd class="col-sm-10">
+            @(Model.IsCompleted ? "Completed" : "Active")
+        </dd>
+        <hr />
+        <h4>Tags</h4>
+        @if (ViewBag.Tags != null)
+        {
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @foreach (var tag in (IEnumerable<TodoListApp.WebApp.Models.Tag>)ViewBag.Tags)
+                {
+                    <a asp-controller="Tags" asp-action="Details" asp-route-id="@tag.Id" class="badge bg-primary text-decoration-none p-2">#@tag.Name</a>
+                }
+            </div>
+        }
+        <hr />
+        <h4>Comments</h4>
+        @if (ViewBag.Comments != null && ((IEnumerable<TodoListApp.WebApp.Models.Comment>)ViewBag.Comments).Any())
+        {
+            foreach (var comment in (IEnumerable<TodoListApp.WebApp.Models.Comment>)ViewBag.Comments)
+            {
+                <div class="card mb-2 bg-light">
+                    <div class="card-body py-2">
+                        <small class="text-muted text-end d-block">@comment.CreatedDate.ToString("g")</small>
+                        <p class="card-text mb-1">@comment.Text</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No comments yet.</p>
+        }
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" asp-route-listId="@Model.TodoListId" class="btn btn-secondary">Back to Tasks</a>
+</div>
