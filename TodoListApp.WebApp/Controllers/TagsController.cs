@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Services;
 
 namespace TodoListApp.WebApp.Controllers;
 
+[Authorize]
 public class TagsController : Controller
 {
     private readonly ITagWebApiService service;
@@ -27,3 +29,4 @@ public class TagsController : Controller
         return this.View(tasks);
     }
 }
+

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Services;
 using TodoListApp.WebApi.Models;
 
 namespace TodoListApp.WebApi.Controllers;
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class TagController : ControllerBase
 {
     private readonly ITagDatabaseService service;
@@ -31,7 +33,13 @@ public class TagController : ControllerBase
     [HttpGet("{tagId}/tasks")]
     public async Task<ActionResult<IEnumerable<TodoTaskModel>>> GetTasksByTag(int tagId)
     {
-        var tasks = await this.service.GetTasksByTagAsync(tagId);
+        var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return this.Unauthorized();
+        }
+
+        var tasks = await this.service.GetTasksByTagAsync(tagId, userId);
         return this.Ok(tasks.Select(t => new TodoTaskModel
         {
             Id = t.Id,
@@ -63,3 +71,4 @@ public class TagController : ControllerBase
         return this.NoContent();
     }
 }
+

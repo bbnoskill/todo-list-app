@@ -17,37 +17,37 @@ builder.Services.AddTransient<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 builder.Services.AddHttpClient<ITodoListWebApiService, TodoListWebApiService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 }).AddHttpMessageHandler<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 
 builder.Services.AddHttpClient<ITodoTaskWebApiService, TodoTaskWebApiService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 }).AddHttpMessageHandler<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 
 builder.Services.AddHttpClient<ITagWebApiService, TagWebApiService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 }).AddHttpMessageHandler<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 
 builder.Services.AddHttpClient<ICommentWebApiService, CommentWebApiService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 }).AddHttpMessageHandler<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 
 builder.Services.AddHttpClient<IAuthWebService, AuthWebService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 });
 
 builder.Services.AddHttpClient<IHistoryWebApiService, HistoryWebApiService>(client =>
 {
     var baseAddress = builder.Configuration["WebApiBaseAddress"] ?? "https://localhost:7214/";
-    client.BaseAddress = new Uri(new Uri(baseAddress), "api/");
+    client.BaseAddress = new Uri(new Uri(baseAddress), "api/v1/");
 }).AddHttpMessageHandler<TodoListApp.WebApp.Handlers.JwtTokenHandler>();
 
 var app = builder.Build();
@@ -68,3 +68,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+

@@ -11,7 +11,8 @@ namespace TodoListApp.WebApi.Controllers;
 /// </summary>
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class HistoryController : ControllerBase
 {
     private readonly ITaskHistoryDatabaseService service;
@@ -49,3 +50,4 @@ public class HistoryController : ControllerBase
         }));
     }
 }
+

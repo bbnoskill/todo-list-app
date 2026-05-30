@@ -9,7 +9,8 @@ namespace TodoListApp.WebApi.Controllers;
 /// Controller for managing task comments.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class CommentsController : ControllerBase
 {
     private readonly ICommentDatabaseService service;
@@ -130,3 +131,4 @@ public class CommentsController : ControllerBase
         return this.NoContent();
     }
 }
+

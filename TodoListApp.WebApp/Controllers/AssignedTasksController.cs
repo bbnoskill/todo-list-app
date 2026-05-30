@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Services;
 
 namespace TodoListApp.WebApp.Controllers;
 
+[Authorize]
 public class AssignedTasksController : Controller
 {
     private readonly ITodoTaskWebApiService service;
@@ -37,3 +39,4 @@ public class AssignedTasksController : Controller
         return this.RedirectToAction(nameof(this.Index), new { isCompleted = currentFilter, sortBy = currentSort });
     }
 }
+

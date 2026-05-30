@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TodoListApp.Data;
 using TodoListApp.Data.Entities;
 using TodoListApp.Data.Interfaces;
@@ -34,10 +34,10 @@ public class TagDatabaseService : ITagDatabaseService
         return task.Tags.Select(t => new Tag { Id = t.Id, Name = t.Name });
     }
 
-    public async Task<IEnumerable<TodoTask>> GetTasksByTagAsync(int tagId)
+    public async Task<IEnumerable<TodoTask>> GetTasksByTagAsync(int tagId, string userId)
     {
         var tag = await this.dbContext.Tags
-            .Include(t => t.Tasks)
+            .Include(t => t.Tasks.Where(task => task.TodoList.UserId == userId))
             .FirstOrDefaultAsync(t => t.Id == tagId);
         if (tag == null)
         {

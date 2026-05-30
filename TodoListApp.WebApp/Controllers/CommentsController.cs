@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models;
@@ -5,6 +6,7 @@ using TodoListApp.WebApp.Services;
 
 namespace TodoListApp.WebApp.Controllers;
 
+[Authorize]
 public class CommentsController : Controller
 {
     private readonly ICommentWebApiService commentService;
@@ -66,3 +68,4 @@ public class CommentsController : Controller
         return this.View(model);
     }
 }
+

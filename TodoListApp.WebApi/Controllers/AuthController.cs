@@ -8,7 +8,8 @@ using TodoListApp.WebApi.Models;
 namespace TodoListApp.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly UserManager<IdentityUser> userManager;
@@ -79,3 +80,4 @@ public class AuthController : ControllerBase
         return this.Ok(new { Token = token });
     }
 }
+

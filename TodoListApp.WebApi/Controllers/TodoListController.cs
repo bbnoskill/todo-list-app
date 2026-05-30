@@ -12,7 +12,8 @@ namespace TodoListApp.WebApi.Controllers;
 /// </summary>
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class TodoListController : ControllerBase
 {
     private readonly ITodoListDatabaseService service;
@@ -265,3 +266,4 @@ public class TodoListController : ControllerBase
         return this.CreatedAtAction("GetById", "Tasks", new { id = model.Id }, model);
     }
 }
+

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using TodoListApp.WebApp.Models;
@@ -5,6 +6,7 @@ using TodoListApp.WebApp.Services;
 
 namespace TodoListApp.WebApp.Controllers;
 
+[Authorize]
 public class TodoListController : Controller
 {
     private readonly ITodoListWebApiService service;
@@ -119,3 +121,4 @@ public class TodoListController : Controller
         return this.View(model);
     }
 }
+
